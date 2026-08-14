@@ -4,26 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>美甲師每日記帳</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f7f4f6;color:#241f23;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",Arial,sans-serif}
-.wrap{max-width:720px;margin:auto;padding:14px}
-h1{font-size:23px;margin:8px 0 4px}.sub{font-size:13px;color:#756a72;margin-bottom:12px}
-.card{background:#fff;border:1px solid #eadfe5;border-radius:18px;padding:14px;margin:12px 0}
-label{display:block;font-size:13px;color:#756a72;margin-bottom:5px}
-input{width:100%;border:1px solid #dfd5db;border-radius:11px;padding:11px;font-size:16px;background:#fff}
-.name-input{font-size:18px;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}
-button:disabled{opacity:.6}.status{text-align:center;font-size:13px;color:#756a72;margin:-4px 0 10px;min-height:18px}
-.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}table{width:100%;border-collapse:collapse;min-width:430px}
-th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}th{background:#efe7eb;font-size:13px}.money-input{text-align:right}.date-input{text-align:center}
-tfoot td{background:#fff2cf;font-weight:800;font-size:16px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:22px;margin-top:4px}@media(max-width:600px){.summary{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#f7f4f6;color:#241f23;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:14px}h1{font-size:23px;margin:8px 0 4px}.sub{font-size:13px;color:#756a72;margin-bottom:12px}.card{background:#fff;border:1px solid #eadfe5;border-radius:18px;padding:14px;margin:12px 0}label{display:block;font-size:13px;color:#756a72;margin-bottom:5px}input{width:100%;border:1px solid #dfd5db;border-radius:11px;padding:11px;font-size:16px;background:#fff}.name-input{font-size:18px;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}button:disabled{opacity:.6}.status{text-align:center;font-size:13px;color:#756a72;margin:-4px 0 10px;min-height:18px}.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}table{width:100%;border-collapse:collapse;min-width:430px}th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}th{background:#efe7eb;font-size:13px}.money-input{text-align:right}.date-input{text-align:center}tfoot td{background:#fff2cf;font-weight:800;font-size:16px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:22px;margin-top:4px}@media(max-width:600px){.summary{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
-<div class="wrap">
+<body><div class="wrap">
 <h1>美甲師每日記帳</h1><div class="sub">日期｜當日總數｜小費總數</div>
 <div class="card"><label>美甲師姓名</label><input id="techName" class="name-input" placeholder="輸入姓名"></div>
 <div class="actions"><button class="save" id="saveBtn">儲存到 Google Sheet</button><button class="clear" id="clearBtn">清空數字</button></div>
@@ -33,72 +19,26 @@ tfoot td{background:#fff2cf;font-weight:800;font-size:16px}.summary{display:grid
 </div>
 <script>
 const ROWS=16;
-const KEY="nail_tech_daily_github_v2";
+const KEY="nail_tech_daily_github_v3_multiuser";
+const OLD_KEYS=["nail_tech_daily_github_v2","nail_tech_daily_github_v1"];
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyW3CPRYyGXYen2lWexTUQySVflMhx2jDs-M7ba9eUX5bGMvgS8VwkXPwv_Wj28Z4QY/exec";
-const $=(id)=>document.getElementById(id);
-
-function buildRows(){
-  let html="";
-  for(let i=1;i<=ROWS;i++){
-    html+=`<tr><td><input id="date${i}" class="date-input" type="date"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;
-  }
-  $("rows").innerHTML=html;
-}
-function todayLocal(){
-  const d=new Date();
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,"0");
-  const day=String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-function ensureDate(i){
-  const dateEl=$("date"+i);
-  if(!dateEl.value) dateEl.value=todayLocal();
-}
-function money(value){return "$"+Number(value||0).toFixed(2)}
-function recalc(){
-  let salesTotal=0,tipsTotal=0;
-  for(let i=1;i<=ROWS;i++){
-    salesTotal+=parseFloat($("sales"+i).value)||0;
-    tipsTotal+=parseFloat($("tips"+i).value)||0;
-  }
-  $("sumSales").textContent=money(salesTotal);$("sumTips").textContent=money(tipsTotal);
-  $("summarySales").textContent=money(salesTotal);$("summaryTips").textContent=money(tipsTotal);$("summaryAll").textContent=money(salesTotal+tipsTotal);
-}
-function localSave(){
-  const data={name:$("techName").value,rows:[]};
-  for(let i=1;i<=ROWS;i++) data.rows.push({date:$("date"+i).value,sales:$("sales"+i).value,tips:$("tips"+i).value});
-  localStorage.setItem(KEY,JSON.stringify(data));
-}
+const $=id=>document.getElementById(id);
+let rowIds=[];
+function newId(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2)}
+function buildRows(){let html="";for(let i=1;i<=ROWS;i++){html+=`<tr><td><input id="date${i}" class="date-input" type="date"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;}$("rows").innerHTML=html;}
+function todayLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function ensureDate(i){if(!$("date"+i).value)$("date"+i).value=todayLocal();}
+function money(v){return "$"+Number(v||0).toFixed(2)}
+function recalc(){let s=0,t=0;for(let i=1;i<=ROWS;i++){s+=parseFloat($("sales"+i).value)||0;t+=parseFloat($("tips"+i).value)||0}$("sumSales").textContent=money(s);$("sumTips").textContent=money(t);$("summarySales").textContent=money(s);$("summaryTips").textContent=money(t);$("summaryAll").textContent=money(s+t)}
+function localSave(){const data={name:$("techName").value,rows:[]};for(let i=1;i<=ROWS;i++){data.rows.push({id:rowIds[i-1],date:$("date"+i).value,sales:$("sales"+i).value,tips:$("tips"+i).value})}localStorage.setItem(KEY,JSON.stringify(data));}
 async function saveData(){
-  localSave();recalc();
-  const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在同步到 Google Sheet…";
-  try{
-    const name=$("techName").value.trim();
-    const jobs=[];
-    for(let i=1;i<=ROWS;i++){
-      const body=new URLSearchParams({name:name,row:String(i),date:$("date"+i).value,sales:$("sales"+i).value||"0",tips:$("tips"+i).value||"0"});
-      jobs.push(fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body.toString()}));
-    }
-    await Promise.all(jobs);
-    $("status").textContent="✅ 已儲存並同步到 Google Sheet";
-    alert("已儲存到 Google Sheet");
-  }catch(err){
-    $("status").textContent="⚠️ 同步失敗，資料已先儲存在這台裝置";
-    alert("Google Sheet 同步失敗，請再試一次");
-  }finally{btn.disabled=false;}
-}
-function loadData(){
-  let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem("nail_tech_daily_github_v1")||"null")}catch(e){}
-  if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const row=(data.rows&&data.rows[i-1])||{};$("date"+i).value=row.date||"";$("sales"+i).value=row.sales||"";$("tips"+i).value=row.tips||"";}}
-  recalc();
-}
-function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value=""}localSave();recalc();$("status").textContent="";}
-buildRows();
-for(let i=1;i<=ROWS;i++){
-  $("sales"+i).addEventListener("input",()=>{ensureDate(i);recalc();});
-  $("tips"+i).addEventListener("input",()=>{ensureDate(i);recalc();});
-}
+ const name=$("techName").value.trim();if(!name){alert("請先輸入美甲師姓名");return;}
+ localSave();recalc();const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在同步到 Google Sheet…";
+ try{const jobs=[];for(let i=1;i<=ROWS;i++){const sales=$("sales"+i).value,tips=$("tips"+i).value,date=$("date"+i).value;if(sales===""&&tips==="")continue;ensureDate(i);const body=new URLSearchParams({action:"upsert",recordId:rowIds[i-1],name,date:$("date"+i).value,sales:sales||"0",tips:tips||"0"});jobs.push(fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body.toString()}));}
+ if(!jobs.length){alert("請先輸入至少一筆金額");return;}await Promise.all(jobs);localSave();$("status").textContent="✅ 已儲存並同步到 Google Sheet";alert("已儲存到 Google Sheet");
+ }catch(err){$("status").textContent="⚠️ 同步失敗，資料已先儲存在這台裝置";alert("Google Sheet 同步失敗，請再試一次");}finally{btn.disabled=false;}}
+function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null");if(!data){for(const k of OLD_KEYS){data=JSON.parse(localStorage.getItem(k)||"null");if(data)break;}}}catch(e){}rowIds=[];for(let i=1;i<=ROWS;i++)rowIds.push((data&&data.rows&&data.rows[i-1]&&data.rows[i-1].id)||newId());if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const r=(data.rows&&data.rows[i-1])||{};$("date"+i).value=r.date||"";$("sales"+i).value=r.sales||"";$("tips"+i).value=r.tips||"";}}localSave();recalc();}
+function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value="";rowIds[i-1]=newId();}localSave();recalc();$("status").textContent="";}
+buildRows();for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",()=>{ensureDate(i);recalc();});$("tips"+i).addEventListener("input",()=>{ensureDate(i);recalc();});}
 $("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);loadData();
-</script>
-</body></html>
+</script></body></html>
