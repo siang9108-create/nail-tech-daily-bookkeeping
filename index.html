@@ -10,59 +10,80 @@
 *{box-sizing:border-box}
 body{margin:0;background:#f7f4f6;color:#241f23;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",Arial,sans-serif}
 .wrap{max-width:720px;margin:auto;padding:14px}
-h1{font-size:23px;margin:8px 0 4px}
-.sub{font-size:13px;color:#756a72;margin-bottom:12px}
+h1{font-size:23px;margin:8px 0 4px}.sub{font-size:13px;color:#756a72;margin-bottom:12px}
 .card{background:#fff;border:1px solid #eadfe5;border-radius:18px;padding:14px;margin:12px 0}
 label{display:block;font-size:13px;color:#756a72;margin-bottom:5px}
 input{width:100%;border:1px solid #dfd5db;border-radius:11px;padding:11px;font-size:16px;background:#fff}
-.name-input{font-size:18px;font-weight:700}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}
-.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}
-.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}
-table{width:100%;border-collapse:collapse;min-width:430px}
-th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}
-th{background:#efe7eb;font-size:13px}.money-input{text-align:right}.date-input{text-align:center}
-tfoot td{background:#fff2cf;font-weight:800;font-size:16px}
-.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}
-.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:22px;margin-top:4px}
-@media(max-width:600px){.summary{grid-template-columns:1fr}}
+.name-input{font-size:18px;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}
+button:disabled{opacity:.6}.status{text-align:center;font-size:13px;color:#756a72;margin:-4px 0 10px;min-height:18px}
+.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}table{width:100%;border-collapse:collapse;min-width:430px}
+th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}th{background:#efe7eb;font-size:13px}.money-input{text-align:right}.date-input{text-align:center}
+tfoot td{background:#fff2cf;font-weight:800;font-size:16px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:22px;margin-top:4px}@media(max-width:600px){.summary{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>美甲師每日記帳</h1>
-<div class="sub">日期｜當日總數｜小費總數</div>
+<h1>美甲師每日記帳</h1><div class="sub">日期｜當日總數｜小費總數</div>
 <div class="card"><label>美甲師姓名</label><input id="techName" class="name-input" placeholder="輸入姓名"></div>
-<div class="actions"><button class="save" id="saveBtn">儲存</button><button class="clear" id="clearBtn">清空數字</button></div>
-<div class="table-wrap"><table><thead><tr><th>日期</th><th>當日總數</th><th>小費總數</th></tr></thead><tbody>
-<tr><td><input id="date1" class="date-input" placeholder="日期"></td><td><input id="sales1" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips1" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date2" class="date-input" placeholder="日期"></td><td><input id="sales2" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips2" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date3" class="date-input" placeholder="日期"></td><td><input id="sales3" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips3" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date4" class="date-input" placeholder="日期"></td><td><input id="sales4" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips4" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date5" class="date-input" placeholder="日期"></td><td><input id="sales5" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips5" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date6" class="date-input" placeholder="日期"></td><td><input id="sales6" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips6" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date7" class="date-input" placeholder="日期"></td><td><input id="sales7" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips7" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date8" class="date-input" placeholder="日期"></td><td><input id="sales8" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips8" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date9" class="date-input" placeholder="日期"></td><td><input id="sales9" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips9" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date10" class="date-input" placeholder="日期"></td><td><input id="sales10" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips10" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date11" class="date-input" placeholder="日期"></td><td><input id="sales11" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips11" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date12" class="date-input" placeholder="日期"></td><td><input id="sales12" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips12" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date13" class="date-input" placeholder="日期"></td><td><input id="sales13" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips13" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date14" class="date-input" placeholder="日期"></td><td><input id="sales14" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips14" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date15" class="date-input" placeholder="日期"></td><td><input id="sales15" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips15" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-<tr><td><input id="date16" class="date-input" placeholder="日期"></td><td><input id="sales16" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips16" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>
-</tbody><tfoot><tr><td>累計</td><td id="sumSales">$0.00</td><td id="sumTips">$0.00</td></tr></tfoot></table></div>
+<div class="actions"><button class="save" id="saveBtn">儲存到 Google Sheet</button><button class="clear" id="clearBtn">清空數字</button></div>
+<div class="status" id="status"></div>
+<div class="table-wrap"><table><thead><tr><th>日期</th><th>當日總數</th><th>小費總數</th></tr></thead><tbody id="rows"></tbody><tfoot><tr><td>累計</td><td id="sumSales">$0.00</td><td id="sumTips">$0.00</td></tr></tfoot></table></div>
 <div class="card"><div class="summary"><div class="stat"><span>當日總數累計</span><b id="summarySales">$0.00</b></div><div class="stat"><span>小費累計</span><b id="summaryTips">$0.00</b></div><div class="stat"><span>總累計</span><b id="summaryAll">$0.00</b></div></div></div>
 </div>
 <script>
-const ROWS=16;const KEY="nail_tech_daily_github_v1";const $=(id)=>document.getElementById(id);
+const ROWS=16;
+const KEY="nail_tech_daily_github_v2";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyW3CPRYyGXYen2lWexTUQySVflMhx2jDs-M7ba9eUX5bGMvgS8VwkXPwv_Wj28Z4QY/exec";
+const $=(id)=>document.getElementById(id);
+
+function buildRows(){
+  let html="";
+  for(let i=1;i<=ROWS;i++){
+    html+=`<tr><td><input id="date${i}" class="date-input" placeholder="日期"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;
+  }
+  $("rows").innerHTML=html;
+}
 function money(value){return "$"+Number(value||0).toFixed(2)}
-function recalc(){let salesTotal=0,tipsTotal=0;for(let i=1;i<=ROWS;i++){salesTotal+=parseFloat($("sales"+i).value)||0;tipsTotal+=parseFloat($("tips"+i).value)||0}$("sumSales").textContent=money(salesTotal);$("sumTips").textContent=money(tipsTotal);$("summarySales").textContent=money(salesTotal);$("summaryTips").textContent=money(tipsTotal);$("summaryAll").textContent=money(salesTotal+tipsTotal)}
-function saveData(){const data={name:$("techName").value,rows:[]};for(let i=1;i<=ROWS;i++){data.rows.push({date:$("date"+i).value,sales:$("sales"+i).value,tips:$("tips"+i).value})}localStorage.setItem(KEY,JSON.stringify(data));recalc();alert("已儲存")}
-function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const row=(data.rows&&data.rows[i-1])||{};$("date"+i).value=row.date||"";$("sales"+i).value=row.sales||"";$("tips"+i).value=row.tips||""}}recalc()}
-function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value=""}recalc()}
+function recalc(){
+  let salesTotal=0,tipsTotal=0;
+  for(let i=1;i<=ROWS;i++){
+    salesTotal+=parseFloat($("sales"+i).value)||0;
+    tipsTotal+=parseFloat($("tips"+i).value)||0;
+  }
+  $("sumSales").textContent=money(salesTotal);$("sumTips").textContent=money(tipsTotal);
+  $("summarySales").textContent=money(salesTotal);$("summaryTips").textContent=money(tipsTotal);$("summaryAll").textContent=money(salesTotal+tipsTotal);
+}
+function localSave(){
+  const data={name:$("techName").value,rows:[]};
+  for(let i=1;i<=ROWS;i++) data.rows.push({date:$("date"+i).value,sales:$("sales"+i).value,tips:$("tips"+i).value});
+  localStorage.setItem(KEY,JSON.stringify(data));
+}
+async function saveData(){
+  localSave();recalc();
+  const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在同步到 Google Sheet…";
+  try{
+    const name=$("techName").value.trim();
+    const jobs=[];
+    for(let i=1;i<=ROWS;i++){
+      const body=new URLSearchParams({name:name,row:String(i),date:$("date"+i).value,sales:$("sales"+i).value||"0",tips:$("tips"+i).value||"0"});
+      jobs.push(fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body.toString()}));
+    }
+    await Promise.all(jobs);
+    $("status").textContent="✅ 已儲存並同步到 Google Sheet";
+    alert("已儲存到 Google Sheet");
+  }catch(err){
+    $("status").textContent="⚠️ 同步失敗，資料已先儲存在這台裝置";
+    alert("Google Sheet 同步失敗，請再試一次");
+  }finally{btn.disabled=false;}
+}
+function loadData(){
+  let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||localStorage.getItem("nail_tech_daily_github_v1")||"null")}catch(e){}
+  if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const row=(data.rows&&data.rows[i-1])||{};$("date"+i).value=row.date||"";$("sales"+i).value=row.sales||"";$("tips"+i).value=row.tips||"";}}
+  recalc();
+}
+function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value=""}localSave();recalc();$("status").textContent="";}
+buildRows();
 for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",recalc);$("tips"+i).addEventListener("input",recalc)}
 $("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);loadData();
 </script>
