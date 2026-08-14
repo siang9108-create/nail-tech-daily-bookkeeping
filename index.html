@@ -40,9 +40,20 @@ const $=(id)=>document.getElementById(id);
 function buildRows(){
   let html="";
   for(let i=1;i<=ROWS;i++){
-    html+=`<tr><td><input id="date${i}" class="date-input" placeholder="日期"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;
+    html+=`<tr><td><input id="date${i}" class="date-input" type="date"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;
   }
   $("rows").innerHTML=html;
+}
+function todayLocal(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function ensureDate(i){
+  const dateEl=$("date"+i);
+  if(!dateEl.value) dateEl.value=todayLocal();
 }
 function money(value){return "$"+Number(value||0).toFixed(2)}
 function recalc(){
@@ -84,7 +95,10 @@ function loadData(){
 }
 function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value=""}localSave();recalc();$("status").textContent="";}
 buildRows();
-for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",recalc);$("tips"+i).addEventListener("input",recalc)}
+for(let i=1;i<=ROWS;i++){
+  $("sales"+i).addEventListener("input",()=>{ensureDate(i);recalc();});
+  $("tips"+i).addEventListener("input",()=>{ensureDate(i);recalc();});
+}
 $("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);loadData();
 </script>
 </body></html>
