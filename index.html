@@ -19,8 +19,7 @@
 </div>
 <script>
 const ROWS=16;
-const KEY="nail_tech_daily_github_v3_multiuser";
-const OLD_KEYS=["nail_tech_daily_github_v2","nail_tech_daily_github_v1"];
+const KEY="nail_tech_daily_github_v4_clean";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyW3CPRYyGXYen2lWexTUQySVflMhx2jDs-M7ba9eUX5bGMvgS8VwkXPwv_Wj28Z4QY/exec";
 const $=id=>document.getElementById(id);
 let rowIds=[];
@@ -34,10 +33,10 @@ function localSave(){const data={name:$("techName").value,rows:[]};for(let i=1;i
 async function saveData(){
  const name=$("techName").value.trim();if(!name){alert("請先輸入美甲師姓名");return;}
  localSave();recalc();const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在同步到 Google Sheet…";
- try{const jobs=[];for(let i=1;i<=ROWS;i++){const sales=$("sales"+i).value,tips=$("tips"+i).value,date=$("date"+i).value;if(sales===""&&tips==="")continue;ensureDate(i);const body=new URLSearchParams({action:"upsert",recordId:rowIds[i-1],name,date:$("date"+i).value,sales:sales||"0",tips:tips||"0"});jobs.push(fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body.toString()}));}
+ try{const jobs=[];for(let i=1;i<=ROWS;i++){const sales=$("sales"+i).value,tips=$("tips"+i).value;if(sales===""&&tips==="")continue;ensureDate(i);const body=new URLSearchParams({action:"upsert",recordId:rowIds[i-1],name,date:$("date"+i).value,sales:sales||"0",tips:tips||"0"});jobs.push(fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body.toString()}));}
  if(!jobs.length){alert("請先輸入至少一筆金額");return;}await Promise.all(jobs);localSave();$("status").textContent="✅ 已儲存並同步到 Google Sheet";alert("已儲存到 Google Sheet");
  }catch(err){$("status").textContent="⚠️ 同步失敗，資料已先儲存在這台裝置";alert("Google Sheet 同步失敗，請再試一次");}finally{btn.disabled=false;}}
-function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null");if(!data){for(const k of OLD_KEYS){data=JSON.parse(localStorage.getItem(k)||"null");if(data)break;}}}catch(e){}rowIds=[];for(let i=1;i<=ROWS;i++)rowIds.push((data&&data.rows&&data.rows[i-1]&&data.rows[i-1].id)||newId());if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const r=(data.rows&&data.rows[i-1])||{};$("date"+i).value=r.date||"";$("sales"+i).value=r.sales||"";$("tips"+i).value=r.tips||"";}}localSave();recalc();}
+function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}rowIds=[];for(let i=1;i<=ROWS;i++)rowIds.push((data&&data.rows&&data.rows[i-1]&&data.rows[i-1].id)||newId());if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const r=(data.rows&&data.rows[i-1])||{};$("date"+i).value=r.date||"";$("sales"+i).value=r.sales||"";$("tips"+i).value=r.tips||"";}}localSave();recalc();}
 function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value="";rowIds[i-1]=newId();}localSave();recalc();$("status").textContent="";}
 buildRows();for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",()=>{ensureDate(i);recalc();});$("tips"+i).addEventListener("input",()=>{ensureDate(i);recalc();});}
 $("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);loadData();
