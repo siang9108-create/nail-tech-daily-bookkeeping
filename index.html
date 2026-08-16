@@ -6,43 +6,31 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>美甲師每日記帳</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f7f4f6;color:#241f23;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:14px}h1{font-size:23px;margin:8px 0 4px}.sub{font-size:13px;color:#756a72;margin-bottom:12px}.card{background:#fff;border:1px solid #eadfe5;border-radius:18px;padding:14px;margin:12px 0}label{display:block;font-size:13px;color:#756a72;margin-bottom:5px}input{width:100%;border:1px solid #dfd5db;border-radius:11px;padding:11px;font-size:16px;background:#fff}.name-input{font-size:18px;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}button:disabled{opacity:.6}.status{text-align:center;font-size:13px;color:#756a72;margin:-4px 0 10px;min-height:18px}.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}table{width:100%;border-collapse:collapse;min-width:430px}th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}th{background:#efe7eb;font-size:13px}.money-input{text-align:right}.date-input{text-align:center}tfoot td{background:#fff2cf;font-weight:800;font-size:16px}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:22px;margin-top:4px}@media(max-width:600px){.summary{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;background:#f7f4f6;color:#241f23;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",Arial,sans-serif}.wrap{max-width:720px;margin:auto;padding:14px}h1{font-size:27px;margin:10px 0 4px}.sub{font-size:14px;color:#756a72;margin-bottom:12px}.card{background:#fff;border:1px solid #eadfe5;border-radius:18px;padding:14px;margin:12px 0}.top-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:13px;color:#756a72;margin-bottom:5px}input{width:100%;border:1px solid #dfd5db;border-radius:11px;padding:11px;font-size:16px;background:#fff}.name-input{font-size:18px;font-weight:700}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}button{border:0;border-radius:13px;padding:14px;font-size:17px;font-weight:700}.save{background:#9b7187;color:#fff}.clear{background:#efe7eb;color:#241f23}button:disabled{opacity:.6}.status{text-align:center;font-size:13px;color:#756a72;margin:-4px 0 10px;min-height:18px}.table-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}table{width:100%;border-collapse:collapse;min-width:430px}th,td{border-bottom:1px solid #eadfe5;border-right:1px solid #eadfe5;padding:7px;text-align:center}th{background:#efe7eb;font-size:13px}.num{width:48px;font-weight:700}.money-input{text-align:right}tfoot td{background:#fff2cf;font-weight:800;font-size:17px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#fbf9fa;border:1px solid #eadfe5;border-radius:14px;padding:12px}.stat span{font-size:12px;color:#756a72}.stat b{display:block;font-size:24px;margin-top:4px}@media(max-width:600px){.top-grid{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body><div class="wrap">
-<h1>美甲師每日記帳</h1><div class="sub">日期｜當日總數｜小費總數</div>
-<div class="card"><label>美甲師姓名</label><input id="techName" class="name-input" placeholder="輸入姓名"></div>
+<h1>美甲師每日記帳</h1><div class="sub">每日明細｜服務金額｜Tips｜自動累計</div>
+<div class="card"><div class="top-grid"><div><label>美甲師姓名</label><input id="techName" class="name-input" placeholder="輸入姓名"></div><div><label>日期</label><input id="workDate" type="date"></div></div></div>
 <div class="actions"><button class="save" id="saveBtn">儲存到 Google Sheet</button><button class="clear" id="clearBtn">清空數字</button></div>
 <div class="status" id="status"></div>
-<div class="table-wrap"><table><thead><tr><th>日期</th><th>當日總數</th><th>小費總數</th></tr></thead><tbody id="rows"></tbody><tfoot><tr><td>累計</td><td id="sumSales">$0.00</td><td id="sumTips">$0.00</td></tr></tfoot></table></div>
-<div class="card"><div class="summary"><div class="stat"><span>當日總數累計</span><b id="summarySales">$0.00</b></div><div class="stat"><span>小費累計</span><b id="summaryTips">$0.00</b></div><div class="stat"><span>總累計</span><b id="summaryAll">$0.00</b></div></div></div>
+<div class="table-wrap"><table><thead><tr><th class="num">#</th><th>服務金額</th><th>Tips</th></tr></thead><tbody id="rows"></tbody><tfoot><tr><td>累計</td><td id="sumSales">$0.00</td><td id="sumTips">$0.00</td></tr></tfoot></table></div>
+<div class="card"><div class="summary"><div class="stat"><span>當日服務累計</span><b id="summarySales">$0.00</b></div><div class="stat"><span>當日 Tips 累計</span><b id="summaryTips">$0.00</b></div></div></div>
 </div>
 <script>
-const ROWS=16;
-const KEY="nail_tech_daily_github_v4_clean";
+const ROWS=12;
+const KEY="nail_tech_daily_details_v1";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbynEXz-kpDq954_qEJWwt2YNRnyrdoFbc4ajn-_i_XGxF9df20uZiY0Pe9HBzLGdLdy/exec";
 const $=id=>document.getElementById(id);
-let rowIds=[];
-function newId(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2)}
-function buildRows(){let html="";for(let i=1;i<=ROWS;i++){html+=`<tr><td><input id="date${i}" class="date-input" type="date"></td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;}$("rows").innerHTML=html;}
 function todayLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
-function ensureDate(i){if(!$("date"+i).value)$("date"+i).value=todayLocal();}
 function money(v){return "$"+Number(v||0).toFixed(2)}
-function recalc(){let s=0,t=0;for(let i=1;i<=ROWS;i++){s+=parseFloat($("sales"+i).value)||0;t+=parseFloat($("tips"+i).value)||0}$("sumSales").textContent=money(s);$("sumTips").textContent=money(t);$("summarySales").textContent=money(s);$("summaryTips").textContent=money(t);$("summaryAll").textContent=money(s+t)}
-function localSave(){const data={name:$("techName").value,rows:[]};for(let i=1;i<=ROWS;i++){data.rows.push({id:rowIds[i-1],date:$("date"+i).value,sales:$("sales"+i).value,tips:$("tips"+i).value})}localStorage.setItem(KEY,JSON.stringify(data));}
-async function postRow(params){
-  const body=new URLSearchParams(params);
-  const url=SCRIPT_URL+"?t="+Date.now()+Math.random().toString(36).slice(2);
-  await fetch(url,{method:"POST",mode:"no-cors",cache:"no-store",keepalive:true,body});
-}
-async function saveData(){
- const name=$("techName").value.trim();if(!name){alert("請先輸入美甲師姓名");return;}
- localSave();recalc();const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在送到 Google Sheet…";
- try{const rows=[];for(let i=1;i<=ROWS;i++){const sales=$("sales"+i).value,tips=$("tips"+i).value;if(sales===""&&tips==="")continue;ensureDate(i);rows.push({action:"upsert",recordId:rowIds[i-1],name,date:$("date"+i).value,sales:sales||"0",tips:tips||"0"});}
- if(!rows.length){alert("請先輸入至少一筆金額");return;}for(const row of rows){await postRow(row);}localSave();$("status").textContent="✅ 已送出到 Google Sheet";alert("已送出到 Google Sheet，請回到總表重新整理確認");
- }catch(err){$("status").textContent="⚠️ 送出失敗，資料已先儲存在這台裝置";alert("Google Sheet 送出失敗，請再試一次");}finally{btn.disabled=false;}}
-function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}rowIds=[];for(let i=1;i<=ROWS;i++)rowIds.push((data&&data.rows&&data.rows[i-1]&&data.rows[i-1].id)||newId());if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const r=(data.rows&&data.rows[i-1])||{};$("date"+i).value=r.date||"";$("sales"+i).value=r.sales||"";$("tips"+i).value=r.tips||"";}}localSave();recalc();}
-function clearNumbers(){if(!confirm("確定清空數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value="";rowIds[i-1]=newId();}localSave();recalc();$("status").textContent="";}
-buildRows();for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",()=>{ensureDate(i);recalc();});$("tips"+i).addEventListener("input",()=>{ensureDate(i);recalc();});}
-$("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);loadData();
+function buildRows(){let html="";for(let i=1;i<=ROWS;i++){html+=`<tr><td class="num">${i}</td><td><input id="sales${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td><td><input id="tips${i}" class="money-input" type="number" inputmode="decimal" step="0.01" placeholder="0.00"></td></tr>`;}$("rows").innerHTML=html;}
+function recalc(){let s=0,t=0;for(let i=1;i<=ROWS;i++){s+=parseFloat($("sales"+i).value)||0;t+=parseFloat($("tips"+i).value)||0}$("sumSales").textContent=money(s);$("sumTips").textContent=money(t);$("summarySales").textContent=money(s);$("summaryTips").textContent=money(t);return {sales:s,tips:t}}
+function dailyId(name,date){return "daily-"+encodeURIComponent(name.trim().toLowerCase())+"-"+date}
+function localSave(){const data={name:$("techName").value,date:$("workDate").value,details:[]};for(let i=1;i<=ROWS;i++)data.details.push({sales:$("sales"+i).value,tips:$("tips"+i).value});localStorage.setItem(KEY,JSON.stringify(data));}
+function loadData(){let data=null;try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}$("workDate").value=(data&&data.date)||todayLocal();if(data){$("techName").value=data.name||"";for(let i=1;i<=ROWS;i++){const r=(data.details&&data.details[i-1])||{};$("sales"+i).value=r.sales||"";$("tips"+i).value=r.tips||"";}}recalc();}
+async function postDay(params){const body=new URLSearchParams(params);const url=SCRIPT_URL+"?t="+Date.now();await fetch(url,{method:"POST",mode:"no-cors",cache:"no-store",keepalive:true,body});}
+async function saveData(){const name=$("techName").value.trim();const date=$("workDate").value;if(!name){alert("請先輸入美甲師姓名");return;}if(!date){alert("請先選日期");return;}const totals=recalc();if(totals.sales===0&&totals.tips===0){alert("請先輸入至少一筆服務金額或 Tips");return;}localSave();const btn=$("saveBtn");btn.disabled=true;$("status").textContent="正在送到 Google Sheet…";try{await postDay({action:"upsert",recordId:dailyId(name,date),name,date,sales:String(totals.sales),tips:String(totals.tips)});$("status").textContent="✅ 已送出到 Google Sheet";alert("已送出："+date+"｜服務 $"+totals.sales.toFixed(2)+"｜Tips $"+totals.tips.toFixed(2));}catch(err){$("status").textContent="⚠️ 送出失敗，資料已先儲存在這台裝置";alert("Google Sheet 送出失敗，請再試一次");}finally{btn.disabled=false;}}
+function clearNumbers(){if(!confirm("確定清空這一天的 12 筆數字嗎？姓名和日期會保留。"))return;for(let i=1;i<=ROWS;i++){$("sales"+i).value="";$("tips"+i).value="";}localSave();recalc();$("status").textContent="";}
+buildRows();loadData();for(let i=1;i<=ROWS;i++){$("sales"+i).addEventListener("input",()=>{recalc();localSave();});$("tips"+i).addEventListener("input",()=>{recalc();localSave();});}$("techName").addEventListener("input",localSave);$("workDate").addEventListener("change",localSave);$("saveBtn").addEventListener("click",saveData);$("clearBtn").addEventListener("click",clearNumbers);
 </script></body></html>
