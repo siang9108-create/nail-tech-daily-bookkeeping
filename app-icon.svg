@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#9b7187"/>
+  <circle cx="256" cy="210" r="118" fill="#f7f4f6" opacity="0.96"/>
+  <path d="M180 334c28-45 124-45 152 0" fill="none" stroke="#f7f4f6" stroke-width="34" stroke-linecap="round"/>
+  <text x="256" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="92" font-weight="700" fill="#241f23">SN</text>
+</svg>
