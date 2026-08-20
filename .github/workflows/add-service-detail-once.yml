@@ -1,0 +1,61 @@
+name: Add service detail page once
+on:
+  push:
+    paths:
+      - '.github/workflows/add-service-detail-once.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch index only
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          def rep(old,new,label):
+              global s
+              if old not in s:
+                  raise SystemExit('Missing patch target: '+label)
+              s=s.replace(old,new,1)
+
+          rep('.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}',
+              '.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px}', 'tabs css')
+          rep('.readonly-tech input[readonly]{background:#f6f3f5;color:#241f23}@media',
+              '.readonly-tech input[readonly]{background:#f6f3f5;color:#241f23}.service-wrap{overflow:auto;background:#fff;border:1px solid #eadfe5;border-radius:14px}.service-table{border-collapse:collapse;width:max-content;min-width:100%}.service-table th,.service-table td{min-width:78px;padding:8px 6px;border-right:1px solid #eadfe5;border-bottom:1px solid #eadfe5}.service-table .rownum{position:sticky;left:0;z-index:2;min-width:48px;background:#fff;font-weight:700}.service-table thead .rownum{background:#efe7eb}.service-table .date-head{background:#dfe9f2;font-size:14px}.service-table .sub-head{background:#eef3f7}.service-table tfoot td{background:#fff2cf;font-weight:800}.service-note{text-align:center;color:#756a72;font-size:13px;line-height:1.5;margin:10px 0}.refresh-service{width:100%;background:#241f23;color:#fff}.service-empty{text-align:center;padding:28px;color:#756a72}@media', 'service css')
+          rep('<h1>美甲师每日记账</h1><div class="sub">每日总表＋每日明细</div>',
+              '<h1>美甲师每日记账</h1><div class="sub">每日总表＋每日明细＋服务费明细</div>', 'subtitle')
+          rep('<div class="tabs"><button class="tab active" id="tabSummary">每日总表</button><button class="tab" id="tabDetail">每日明细</button></div>',
+              '<div class="tabs"><button class="tab active" id="tabSummary">每日总表</button><button class="tab" id="tabDetail">每日明细</button><button class="tab" id="tabService">服务费明细</button></div>', 'third tab')
+          rep('</section></div>\n<script>',
+              '</section>\n<section class="page" id="servicePage">\n<div class="card"><div class="period-title">店长输入的服务费与 Tips</div><div class="service-note">这里只显示 Soulcool 主记账中属于当前登录美甲师的每一笔服务费和 Tips，不能在这里修改。</div><button class="refresh-service" id="refreshServiceBtn">刷新服务费明细</button></div>\n<div class="status" id="serviceStatus"></div>\n<div id="serviceTableArea" class="service-wrap"><div class="service-empty">打开此页后会读取服务费明细</div></div>\n</section></div>\n<script>', 'service section')
+          rep('const SUMMARY_ROWS=16,DETAIL_ROWS=12,PERIOD_DAYS=16;',
+              'const SUMMARY_ROWS=16,DETAIL_ROWS=12,PERIOD_DAYS=16,SERVICE_ROWS=13,SERVICE_DAYS=16;', 'service constants')
+          rep("const $=id=>document.getElementById(id);let summaryIds=[],currentDetailDate='',currentUser=null;",
+              "const $=id=>document.getElementById(id);let summaryIds=[],currentDetailDate='',currentUser=null,serviceLoaded=false;", 'service state')
+          rep("function showPage(which){const s=which==='summary';$('summaryPage').classList.toggle('active',s);$('detailPage').classList.toggle('active',!s);$('tabSummary').classList.toggle('active',s);$('tabDetail').classList.toggle('active',!s)}\n$('tabSummary').onclick=()=>showPage('summary');$('tabDetail').onclick=()=>showPage('detail');",
+              "function showPage(which){const pages={summary:'summaryPage',detail:'detailPage',service:'servicePage'};const tabs={summary:'tabSummary',detail:'tabDetail',service:'tabService'};Object.keys(pages).forEach(k=>{$(pages[k]).classList.toggle('active',k===which);$(tabs[k]).classList.toggle('active',k===which)});if(which==='service'&&!serviceLoaded)loadServiceDetail()}\n$('tabSummary').onclick=()=>showPage('summary');$('tabDetail').onclick=()=>showPage('detail');$('tabService').onclick=()=>showPage('service');", 'page switch')
+          marker='async function saveDetail(){'
+          if marker not in s: raise SystemExit('Missing patch target: saveDetail marker')
+          service_js="""function renderServiceDetail(rows){const grouped={};(rows||[]).forEach(r=>{const date=String(r.date||'').slice(0,10);if(!date)return;(grouped[date]??=[]).push({service:Number(r.service||0),tips:Number(r.tips||0)})});const dates=Object.keys(grouped).sort().slice(-SERVICE_DAYS);if(!dates.length){$('serviceTableArea').innerHTML='<div class=\"service-empty\">目前没有服务费明细</div>';return}let h='<table class=\"service-table\"><thead><tr><th class=\"rownum\" rowspan=\"2\">#</th>';dates.forEach(d=>{h+=`<th class=\"date-head\" colspan=\"2\">${d}</th>`});h+='</tr><tr>';dates.forEach(()=>{h+='<th class=\"sub-head\">服务费</th><th class=\"sub-head\">Tips</th>'});h+='</tr></thead><tbody>';for(let i=0;i<SERVICE_ROWS;i++){h+=`<tr><td class=\"rownum\">${i+1}</td>`;dates.forEach(d=>{const r=grouped[d][i]||{};h+=`<td>${r.service!=null&&r.service!==''?Number(r.service).toFixed(2):''}</td><td>${r.tips!=null&&r.tips!==''?Number(r.tips).toFixed(2):''}</td>`});h+='</tr>'}h+='</tbody><tfoot><tr><td class=\"rownum\">累计</td>';dates.forEach(d=>{const sv=grouped[d].reduce((a,r)=>a+Number(r.service||0),0),tp=grouped[d].reduce((a,r)=>a+Number(r.tips||0),0);h+=`<td>${sv.toFixed(2)}</td><td>${tp.toFixed(2)}</td>`});h+='</tr></tfoot></table>';$('serviceTableArea').innerHTML=h}\nasync function loadServiceDetail(){if(!currentUser){$('serviceStatus').textContent='请先登录';return}const pin=sessionStorage.getItem(SESSION_PIN_KEY)||'';if(!pin){$('serviceStatus').textContent='请重新登录后查看';return}const btn=$('refreshServiceBtn');btn.disabled=true;$('serviceStatus').textContent='正在读取服务费明细…';try{const r=await fetch(MAIN_SCRIPT_URL+'?action=serviceDetail&name='+encodeURIComponent(currentUser.name)+'&pin='+encodeURIComponent(pin)+'&t='+Date.now(),{cache:'no-store'});const j=await r.json();if(!j.ok)throw new Error(j.error||'load failed');renderServiceDetail(Array.isArray(j.rows)?j.rows:[]);serviceLoaded=true;$('serviceStatus').textContent=j.rows&&j.rows.length?`✅ 已读取 ${j.rows.length} 笔服务费明细`:'目前没有服务费明细'}catch(e){console.error(e);$('serviceStatus').textContent='⚠️ 服务费明细读取失败，请重新登录后再试'}finally{btn.disabled=false}}\n"""
+          s=s.replace(marker,service_js+marker,1)
+          rep("sessionStorage.setItem(SESSION_PIN_KEY,pin);applyUserRole();",
+              "sessionStorage.setItem(SESSION_PIN_KEY,pin);serviceLoaded=false;applyUserRole();", 'login reset')
+          rep("function logout(){localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_PIN_KEY);currentUser=null;$('loginPin').value='';",
+              "function logout(){localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_PIN_KEY);currentUser=null;serviceLoaded=false;$('loginPin').value='';", 'logout reset')
+          rep("$('clearSummaryBtn').onclick=clearSummary;$('loginBtn').onclick=doLogin;",
+              "$('clearSummaryBtn').onclick=clearSummary;$('refreshServiceBtn').onclick=()=>{serviceLoaded=false;loadServiceDetail()};$('loginBtn').onclick=doLogin;", 'refresh binding')
+          p.write_text(s)
+          PY
+          rm -f .github/workflows/add-service-detail-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/add-service-detail-once.yml
+          git commit -m "Add service fee detail page only"
+          git push origin main
