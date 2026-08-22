@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Soulcool Nails 测试版</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#f7f4f6;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",Arial,sans-serif}.test-badge{height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#241f23;color:#fff;font-size:12px;font-weight:800;letter-spacing:.7px;line-height:1.4}.test-badge span{opacity:.95}.test-info{font-size:11px;font-weight:600;letter-spacing:0;opacity:.84}.login-status{font-size:11px;font-weight:600;letter-spacing:0;opacity:.9}iframe{border:0;width:100%;height:calc(100vh - 66px);display:block;background:#f7f4f6}
+</style>
+</head>
+<body>
+<div class="test-badge">
+  <span>SOULCOOL NAILS · TEST VERSION · 测试版</span>
+  <div class="test-info" id="lastSync">最后同步：尚未同步</div>
+  <div class="login-status" id="loginStatus">目前登入：尚未登入｜资料未同步</div>
+</div>
+<iframe id="appFrame" src="index.html"></iframe>
+<script>
+const frame=document.getElementById('appFrame');
+const lastSync=document.getElementById('lastSync');
+const loginStatus=document.getElementById('loginStatus');
+let synced=false;
+function stampSync(){
+  synced=true;
+  lastSync.textContent='最后同步：'+new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'});
+  updateLoginStatus();
+}
+function updateLoginStatus(){
+  try{
+    const doc=frame.contentDocument;
+    const label=doc&&doc.getElementById('userLabel');
+    const text=(label&&label.textContent||'').trim();
+    if(!text||text==='尚未登录'){
+      loginStatus.textContent='目前登入：尚未登入｜资料未同步';
+      return;
+    }
+    loginStatus.textContent='目前登入：'+text+'｜'+(synced?'资料已同步':'资料未同步');
+  }catch(e){}
+}
+frame.addEventListener('load',()=>{
+  try{
+    const doc=frame.contentDocument;
+    const status=doc&&doc.getElementById('summaryStatus');
+    const userLabel=doc&&doc.getElementById('userLabel');
+    const btn=doc&&doc.getElementById('loadMainBtn');
+    const checkSync=()=>{
+      if((status?.textContent||'').includes('已从 Soulcool 主数据同步')) stampSync();
+    };
+    updateLoginStatus();
+    if(status){
+      checkSync();
+      new MutationObserver(checkSync).observe(status,{childList:true,subtree:true,characterData:true});
+    }
+    if(userLabel){
+      new MutationObserver(updateLoginStatus).observe(userLabel,{childList:true,subtree:true,characterData:true});
+    }
+    if(btn){
+      btn.addEventListener('click',()=>{
+        synced=false;
+        updateLoginStatus();
+        setTimeout(checkSync,1200);
+      });
+    }
+  }catch(e){}
+});
+</script>
+</body>
+</html>
