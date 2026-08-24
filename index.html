@@ -51,7 +51,7 @@ const SUMMARY_KEY='nail_tech_daily_summary_v1',DETAIL_KEY='nail_tech_daily_detai
 const FRESH=new URLSearchParams(location.search).get('fresh');
 if(FRESH){localStorage.removeItem(SUMMARY_KEY);localStorage.removeItem(OLD_KEY);localStorage.removeItem(PERIOD_KEY);Object.keys(localStorage).filter(k=>k.startsWith(DETAIL_KEY+'::')).forEach(k=>localStorage.removeItem(k));history.replaceState({},'',location.pathname+'?v=202608172337');}
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbynEXz-kpDq954_qEJWwt2YNRnyrdoFbc4ajn-_i_XGxF9df20uZiY0Pe9HBzLGdLdy/exec';
-const MAIN_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyGuGwY84rLqAlHzDJHDaWPdphO9kQifUfp2moQDFFlx7RQH0GrT860Jf0HuRNtTKBmFQ/exec';
+const MAIN_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyW3CPRYyGXYen2lWexTUQySVflMhx2jDs-M7ba9eUX5bGMvgS8VwkXPwv_Wj28Z4QY/exec';
 const $=id=>document.getElementById(id);let summaryIds=[],currentDetailDate='',currentUser=null,serviceLoaded=false;
 function todayLocal(){const d=new Date();return fmtDate(d)}
 function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
