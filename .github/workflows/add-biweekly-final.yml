@@ -1,0 +1,82 @@
+name: Add biweekly settlement final
+
+on:
+  push:
+    branches:
+      - feature-biweekly-final
+    paths:
+      - .github/workflows/add-biweekly-final.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature-biweekly-final
+      - name: Patch index.html only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+
+          old = '.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px}'
+          new = '.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px}'
+          if old not in s:
+              raise SystemExit('tabs css target not found')
+          s = s.replace(old, new, 1)
+
+          old = '<div class="tabs"><button class="tab active" id="tabSummary">每日总表</button><button class="tab" id="tabDetail">每日明细</button><button class="tab" id="tabService">服务费明细</button></div>'
+          new = '<div class="tabs"><button class="tab active" id="tabSummary">每日总表</button><button class="tab" id="tabDetail">每日明细</button><button class="tab" id="tabService">服务费明细</button><button class="tab" id="tabBiweekly">两周结算</button></div>'
+          if old not in s:
+              raise SystemExit('tabs html target not found')
+          s = s.replace(old, new, 1)
+
+          old = '</section></div>\n<script>'
+          new = '''</section>\n<section class="page" id="biweeklyPage">\n<div class="card">\n  <div class="period-title">两周结算</div>\n  <div class="service-note">固定结算周期：每月 1–15 日、16–月底。这里只读取每日总表，不会修改任何数据。</div>\n  <div class="actions"><button class="clear" id="prevBiweeklyBtn">← 上一期</button><button class="clear" id="nextBiweeklyBtn">下一期 →</button></div>\n  <div class="current-day" id="biweeklyPeriodLabel"></div>\n</div>\n<div class="table-wrap"><table><thead><tr><th>日期</th><th>当日总数</th><th>小费总数</th></tr></thead><tbody id="biweeklyRows"></tbody><tfoot><tr><td>本期累计</td><td id="biweeklySales">$0.00</td><td id="biweeklyTips">$0.00</td></tr></tfoot></table></div>\n<div class="card"><div class="summary"><div class="stat"><span>服务累计</span><b id="biweeklySalesCard">$0.00</b></div><div class="stat"><span>Tips 累计</span><b id="biweeklyTipsCard">$0.00</b></div><div class="stat"><span>本期合计</span><b id="biweeklyAllCard">$0.00</b></div></div></div>\n</section></div>\n<script>'''
+          if old not in s:
+              raise SystemExit('page insert target not found')
+          s = s.replace(old, new, 1)
+
+          old = "const $=id=>document.getElementById(id);let summaryIds=[],currentDetailDate='',currentUser=null,serviceLoaded=false;"
+          new = "const $=id=>document.getElementById(id);let summaryIds=[],currentDetailDate='',currentUser=null,serviceLoaded=false,biweeklyAnchor='';"
+          if old not in s:
+              raise SystemExit('state target not found')
+          s = s.replace(old, new, 1)
+
+          old = "function showPage(which){const pages={summary:'summaryPage',detail:'detailPage',service:'servicePage'};const tabs={summary:'tabSummary',detail:'tabDetail',service:'tabService'};Object.keys(pages).forEach(k=>{$(pages[k]).classList.toggle('active',k===which);$(tabs[k]).classList.toggle('active',k===which)});if(which==='service'&&!serviceLoaded)loadServiceDetail()}\n$('tabSummary').onclick=()=>showPage('summary');$('tabDetail').onclick=()=>showPage('detail');$('tabService').onclick=()=>showPage('service');"
+          new = "function showPage(which){const pages={summary:'summaryPage',detail:'detailPage',service:'servicePage',biweekly:'biweeklyPage'};const tabs={summary:'tabSummary',detail:'tabDetail',service:'tabService',biweekly:'tabBiweekly'};Object.keys(pages).forEach(k=>{$(pages[k]).classList.toggle('active',k===which);$(tabs[k]).classList.toggle('active',k===which)});if(which==='service'&&!serviceLoaded)loadServiceDetail();if(which==='biweekly')renderBiweekly()}\n$('tabSummary').onclick=()=>showPage('summary');$('tabDetail').onclick=()=>showPage('detail');$('tabService').onclick=()=>showPage('service');$('tabBiweekly').onclick=()=>showPage('biweekly');"
+          if old not in s:
+              raise SystemExit('showPage target not found')
+          s = s.replace(old, new, 1)
+
+          marker = "function buildSummaryRows(){"
+          insert = r'''function summaryDataRows(){const rows=[];for(let i=1;i<=SUMMARY_ROWS;i++){const date=$('sdate'+i).value;if(!date)continue;rows.push({date,sales:parseFloat($('ssales'+i).value)||0,tips:parseFloat($('stips'+i).value)||0})}return rows.sort((a,b)=>a.date.localeCompare(b.date))}
+function biweeklyBounds(anchor){const [y,m,d]=anchor.split('-').map(Number);const last=new Date(y,m,0).getDate();const startDay=d<=15?1:16,endDay=d<=15?15:last;return{start:`${y}-${String(m).padStart(2,'0')}-${String(startDay).padStart(2,'0')}`,end:`${y}-${String(m).padStart(2,'0')}-${String(endDay).padStart(2,'0')}`}}
+function shiftBiweekly(anchor,dir){const [y,m,d]=anchor.split('-').map(Number);if(dir<0){return d<=15?fmtDate(new Date(y,m-2,16)):fmtDate(new Date(y,m-1,1))}return d<=15?fmtDate(new Date(y,m-1,16)):fmtDate(new Date(y,m,1))}
+function renderBiweekly(){const all=summaryDataRows();if(!biweeklyAnchor){biweeklyAnchor=all.length?all[all.length-1].date:todayLocal()}const b=biweeklyBounds(biweeklyAnchor);const rows=all.filter(r=>r.date>=b.start&&r.date<=b.end);let sales=0,tips=0,h='';rows.forEach(r=>{sales+=r.sales;tips+=r.tips;h+=`<tr><td>${r.date}</td><td>${money(r.sales)}</td><td>${money(r.tips)}</td></tr>`});if(!rows.length)h='<tr><td colspan="3" style="padding:24px;color:#756a72">这期目前没有数据</td></tr>';$('biweeklyRows').innerHTML=h;$('biweeklyPeriodLabel').textContent=b.start+' ～ '+b.end;$('biweeklySales').textContent=money(sales);$('biweeklyTips').textContent=money(tips);$('biweeklySalesCard').textContent=money(sales);$('biweeklyTipsCard').textContent=money(tips);$('biweeklyAllCard').textContent=money(sales+tips)}
+function initBiweeklyButtons(){$('prevBiweeklyBtn').onclick=()=>{if(!biweeklyAnchor)biweeklyAnchor=todayLocal();biweeklyAnchor=shiftBiweekly(biweeklyAnchor,-1);renderBiweekly()};$('nextBiweeklyBtn').onclick=()=>{if(!biweeklyAnchor)biweeklyAnchor=todayLocal();biweeklyAnchor=shiftBiweekly(biweeklyAnchor,1);renderBiweekly()}}
+'''
+          if marker not in s:
+              raise SystemExit('function marker not found')
+          s = s.replace(marker, insert + marker, 1)
+
+          old = "buildSummaryRows();buildDetailRows();"
+          new = "buildSummaryRows();buildDetailRows();initBiweeklyButtons();"
+          if old not in s:
+              raise SystemExit('init target not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+          PY
+      - name: Commit isolated change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add read-only semimonthly settlement tab"
+          git push origin feature-biweekly-final
